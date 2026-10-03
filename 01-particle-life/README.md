@@ -14,15 +14,15 @@ uv run particle-life                                   # 30k partículas, 6 tipo
 uv run particle-life --particles 200000 --r-max 0.01   # más partículas, radio menor
 uv run particle-life --preset presets/user/mi_preset.json
 ```
-Opciones: `--particles`, `--types`, `--seed`, `--r-max`, `--preset`, `--size` (píxeles de la ventana, 1200 por defecto; sube el valor si los paneles se ven pequeños), `--no-vsync`, `--bench-frames N`.
+Opciones: `--particles`, `--types`, `--seed`, `--r-max`, `--preset`, `--size` (píxeles de la ventana de render, 1400 por defecto), `--ui-font` (tamaño de letra del panel de controles, 14 pt por defecto; súbelo si lo ves pequeño), `--no-vsync`, `--bench-frames N`.
 
-## Controles (panel en la ventana)
+## Controles (panel Tk en una ventana aparte, escala con la resolución del monitor)
 | Control | Efecto |
 |---|---|
 | `radius` | radio de interacción (fracción del mundo, 0.004–0.33) |
 | `repulsion core (beta)` | radio normalizado bajo el cual todas se repelen |
 | `force` / `friction half-life` | intensidad de la fuerza / tiempo en que la velocidad se reduce a la mitad |
-| `point size`, `paused`, `show matrix` | visualización |
+| `point size`, `paused` | visualización |
 | Matriz (sliders `i->j`) | cuánto es atraída (+1) o repelida (−1) la fila `i` por la columna `j` |
 | `random matrix` / `randomise positions` | nueva matriz / nuevo estado inicial |
 | `save preset` | guarda en `presets/user/` (ignorado por git) |
@@ -69,5 +69,6 @@ uv run pyright
 - `src/particle_life/sim.py` — simulación (Taichi), sin ventana ni entrada de usuario.
 - `src/particle_life/params.py` — parámetros y presets (Python puro).
 - `src/particle_life/reference.py` — referencia NumPy O(N²) usada en los tests.
-- `src/particle_life/app.py` — ventana GGUI y controles.
+- `src/particle_life/app.py` — ventana GGUI de render y bucle principal.
+- `src/particle_life/ui.py` — panel de controles en Tk (GGUI no escala la fuente en monitores HiDPI).
 - `src/particle_life/bench.py` — benchmark sin ventana.
