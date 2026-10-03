@@ -23,8 +23,8 @@ def type_colors(n_types: int) -> np.ndarray:
 
 
 class App:
-    def __init__(self, params: Params, vsync: bool) -> None:
-        self.window = ti.ui.Window("Particle Life", (1000, 1000), vsync=vsync)
+    def __init__(self, params: Params, vsync: bool, size: int = 1200) -> None:
+        self.window = ti.ui.Window("Particle Life", (size, size), vsync=vsync)
         self.canvas = self.window.get_canvas()
         self.gui = self.window.get_gui()
         self.rng = np.random.default_rng(params.seed + 1)
@@ -51,7 +51,7 @@ class App:
     def _ui(self) -> None:
         p = self.sim.params
         g = self.gui
-        g.begin("Controls", 0.01, 0.01, 0.30, 0.34)
+        g.begin("Controls", 0.01, 0.01, 0.36, 0.42)
         p.r_max = g.slider_float("radius", p.r_max, R_MIN, R_MAX_LIMIT)
         p.beta = g.slider_float("repulsion core (beta)", p.beta, 0.05, 0.95)
         p.force_scale = g.slider_float("force", p.force_scale, 0.0, 30.0)
@@ -76,7 +76,7 @@ class App:
 
         if self.show_matrix:
             n = p.n_types
-            g.begin("Attraction matrix (row attracted to column)", 0.01, 0.37, 0.30, 0.60)
+            g.begin("Attraction matrix (row attracted to column)", 0.01, 0.45, 0.36, 0.54)
             m = p.matrix_array()
             changed = False
             for i in range(n):
@@ -116,6 +116,7 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--r-max", type=float, default=0.03)
     ap.add_argument("--preset", type=Path, help="load a preset JSON file")
+    ap.add_argument("--size", type=int, default=1200, help="window size in pixels (square)")
     ap.add_argument("--no-vsync", action="store_true", help="uncap FPS (for benchmarking)")
     ap.add_argument("--bench-frames", type=int, help="run N frames, print mean FPS and exit")
     args = ap.parse_args()
@@ -125,7 +126,7 @@ def main() -> None:
         params.n_particles = args.particles
     else:
         params = Params(args.particles, args.types, args.seed, r_max=args.r_max)
-    App(params, vsync=not args.no_vsync).run(args.bench_frames)
+    App(params, vsync=not args.no_vsync, size=args.size).run(args.bench_frames)
 
 
 if __name__ == "__main__":

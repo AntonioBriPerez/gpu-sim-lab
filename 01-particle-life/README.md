@@ -14,7 +14,7 @@ uv run particle-life                                   # 30k partículas, 6 tipo
 uv run particle-life --particles 200000 --r-max 0.01   # más partículas, radio menor
 uv run particle-life --preset presets/user/mi_preset.json
 ```
-Opciones: `--particles`, `--types`, `--seed`, `--r-max`, `--preset`, `--no-vsync`, `--bench-frames N`.
+Opciones: `--particles`, `--types`, `--seed`, `--r-max`, `--preset`, `--size` (píxeles de la ventana, 1200 por defecto; sube el valor si los paneles se ven pequeños), `--no-vsync`, `--bench-frames N`.
 
 ## Controles (panel en la ventana)
 | Control | Efecto |
