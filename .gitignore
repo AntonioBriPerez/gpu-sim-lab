@@ -1,0 +1,44 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+*.egg-info/
+dist/
+build/
+
+# Heavy artifacts (never in git)
+runs/
+checkpoints/
+models/
+outputs/
+mlruns/
+wandb/
+tensorboard/
+*.npz
+*.npy
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.gguf
+*.onnx
+*.mp4
+*.mkv
+*.webm
+*.gif
+!docs/media/*.gif
+
+# Secrets
+.env
+.env.*
+*.token
+*.pem
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
