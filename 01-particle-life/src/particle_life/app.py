@@ -1,25 +1,19 @@
 """Interactive front-end: GGUI window for rendering + Tk panel for controls."""
 
 import argparse
-import colorsys
 import time
 from pathlib import Path
 
 import numpy as np
 import taichi as ti
 
+from .colors import type_colors
 from .params import Params, load_preset, random_matrix, save_preset
 from .sim import ParticleLife
 from .ui import ControlPanel
 
 PRESET_DIR = Path("presets")
 USER_PRESET_DIR = PRESET_DIR / "user"
-
-
-def type_colors(n_types: int) -> np.ndarray:
-    return np.array(
-        [colorsys.hsv_to_rgb(i / n_types, 0.85, 1.0) for i in range(n_types)], dtype=np.float32
-    )
 
 
 class App:
