@@ -45,3 +45,4 @@ tensorboard/
 
 # User-saved presets
 01-particle-life/presets/user/
+imgui.ini
