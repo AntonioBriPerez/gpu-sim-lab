@@ -8,7 +8,7 @@ Laboratorio personal de simuladores interactivos acelerados por GPU. Proyecto pa
 
 | # | Carpeta | Qué es | Stack | Estado |
 |---|---|---|---|---|
-| 1 | [`01-particle-life`](01-particle-life) | Vida artificial emergente con matriz de atracción/repulsión | Taichi | pendiente |
+| 1 | [`01-particle-life`](01-particle-life) | Vida artificial emergente con matriz de atracción/repulsión | Taichi | MVP listo (pendiente de tu prueba) |
 | 2 | [`02-fluids`](02-fluids) | Fluido 2D interactivo (stable fluids) | Taichi | pendiente |
 | 3 | [`03-evolution`](03-evolution) | Ecosistema evolutivo con cerebros MLP | JAX | pendiente |
 | 4 | [`04-agent-town`](04-agent-town) | Pueblo de agentes con LLM local | Ollama / llama.cpp | pendiente |

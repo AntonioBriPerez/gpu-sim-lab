@@ -1,0 +1,23 @@
+name: 01-particle-life
+on:
+  push:
+    branches: [main]
+    paths: ["01-particle-life/**", ".github/workflows/01-particle-life.yml"]
+  pull_request:
+    paths: ["01-particle-life/**", ".github/workflows/01-particle-life.yml"]
+permissions:
+  contents: read
+defaults:
+  run:
+    working-directory: 01-particle-life
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pyright
+      - run: uv run pytest -q  # CPU only; GPU benchmarks run locally
