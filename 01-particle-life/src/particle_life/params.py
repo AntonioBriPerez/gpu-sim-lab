@@ -16,6 +16,12 @@ def random_matrix(n_types: int, rng: np.random.Generator) -> np.ndarray:
     return rng.uniform(-1.0, 1.0, size=(n_types, n_types)).astype(np.float32)
 
 
+def mutate_matrix(matrix: np.ndarray, amount: float, rng: np.random.Generator) -> np.ndarray:
+    """Gaussian jitter of every entry, clipped to [-1, 1]: explore variations of a good matrix."""
+    noisy = matrix + rng.normal(0.0, amount, size=matrix.shape)
+    return np.clip(noisy, -1.0, 1.0).astype(np.float32)
+
+
 @dataclass
 class Params:
     n_particles: int = 30_000
@@ -48,8 +54,8 @@ class Params:
     def matrix_array(self) -> np.ndarray:
         return np.asarray(self.matrix, dtype=np.float32)
 
-    def friction_factor(self) -> float:
-        return float(0.5 ** (self.dt / self.friction_half_life))
+    def friction_factor(self, dt: float | None = None) -> float:
+        return float(0.5 ** ((self.dt if dt is None else dt) / self.friction_half_life))
 
 
 def save_preset(params: Params, path: Path) -> None:

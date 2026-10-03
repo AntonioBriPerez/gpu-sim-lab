@@ -54,3 +54,36 @@ def test_set_matrix_updates_params():
     sim = ParticleLife(Params(n_particles=50, n_types=3, seed=0))
     sim.set_matrix(np.ones((3, 3), dtype=np.float32))
     assert sim.params.matrix == [[1.0] * 3] * 3
+
+
+def test_brush_attracts_and_repels():
+    sim = ParticleLife(Params(n_particles=1, r_max=0.1, seed=0))
+    sim.pos.from_numpy(np.array([[0.5, 0.5]], dtype=np.float32))
+    sim.vel.fill(0)
+    sim.apply_brush(0.55, 0.5, 0.2, 10.0)
+    assert sim.vel.to_numpy()[0, 0] > 0  # pulled towards +x
+    sim.vel.fill(0)
+    sim.apply_brush(0.55, 0.5, 0.2, -10.0)
+    assert sim.vel.to_numpy()[0, 0] < 0  # pushed away
+    sim.vel.fill(0)
+    sim.apply_brush(0.9, 0.5, 0.1, 10.0)  # outside the radius
+    assert sim.vel.to_numpy()[0, 0] == 0
+
+
+def test_brush_wraps_around_the_torus():
+    sim = ParticleLife(Params(n_particles=1, r_max=0.1, seed=0))
+    sim.pos.from_numpy(np.array([[0.98, 0.5]], dtype=np.float32))
+    sim.vel.fill(0)
+    sim.apply_brush(0.02, 0.5, 0.2, 10.0)
+    assert sim.vel.to_numpy()[0, 0] > 0  # shortest way is across the border, towards +x
+
+
+def test_slow_motion_moves_less():
+    def travel(scale):
+        sim = ParticleLife(Params(n_particles=200, r_max=0.1, seed=3))
+        start = sim.pos.to_numpy().copy()
+        sim.step(scale)
+        d = sim.pos.to_numpy() - start
+        return np.abs(d - np.round(d)).sum()
+
+    assert travel(0.25) < travel(1.0)

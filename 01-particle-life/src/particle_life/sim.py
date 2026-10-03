@@ -59,12 +59,18 @@ class ParticleLife:
     def grid_cells_per_side(self) -> int:
         return max(3, int(1.0 / self.params.r_max))
 
-    def step(self) -> None:
+    def step(self, dt_scale: float = 1.0) -> None:
+        """Advance one step; ``dt_scale`` < 1 slows the simulation down (slow motion)."""
         p = self.params
         nc = self.grid_cells_per_side()
+        dt = p.dt * dt_scale
         self.build_grid(nc)
         self.compute_acc(nc, p.r_max, p.beta, p.force_scale)
-        self.integrate(p.dt, p.friction_factor())
+        self.integrate(dt, p.friction_factor(dt))
+
+    def apply_brush(self, x: float, y: float, radius: float, strength: float, dt_scale=1.0) -> None:
+        """Pull (strength > 0) or push (< 0) particles around world point (x, y)."""
+        self.brush(x, y, radius, strength, self.params.dt * dt_scale)
 
     # ---- kernels -----------------------------------------------------------
     @ti.func
@@ -121,3 +127,12 @@ class ParticleLife:
             self.vel[i] = self.vel[i] * friction + self.acc[i] * dt
             p = self.pos[i] + self.vel[i] * dt
             self.pos[i] = p - ti.floor(p)
+
+    @ti.kernel
+    def brush(self, cx: ti.f32, cy: ti.f32, radius: ti.f32, strength: ti.f32, dt: ti.f32):
+        for i in self.pos:
+            d = ti.Vector([cx, cy]) - self.pos[i]
+            d -= ti.round(d)
+            dist = d.norm()
+            if 0.0 < dist < radius:
+                self.vel[i] += d / dist * strength * (1.0 - dist / radius) * dt

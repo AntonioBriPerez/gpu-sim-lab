@@ -16,17 +16,21 @@ uv run particle-life --preset presets/user/mi_preset.json
 ```
 Opciones: `--particles`, `--types`, `--seed`, `--r-max`, `--preset`, `--size` (píxeles de la ventana de render, 1400 por defecto), `--ui-font` (tamaño de letra del panel de controles, 14 pt por defecto; súbelo si lo ves pequeño), `--no-vsync`, `--bench-frames N`.
 
-## Controles (panel Tk en una ventana aparte, escala con la resolución del monitor)
-| Control | Efecto |
-|---|---|
-| `radius` | radio de interacción (fracción del mundo, 0.004–0.33) |
-| `repulsion core (beta)` | radio normalizado bajo el cual todas se repelen |
-| `force` / `friction half-life` | intensidad de la fuerza / tiempo en que la velocidad se reduce a la mitad |
-| `point size`, `paused` | visualización |
-| Matriz (sliders `i->j`) | cuánto es atraída (+1) o repelida (−1) la fila `i` por la columna `j` |
-| `random matrix` / `randomise positions` | nueva matriz / nuevo estado inicial |
-| `save preset` | guarda en `presets/user/` (ignorado por git) |
-| `load next preset` | recorre `presets/*.json` y `presets/user/*.json` |
+## Controles
+El panel Tk (ventana aparte, escala con la resolución del monitor) tiene botón `help` con la explicación completa.
+
+| Zona | Control | Efecto |
+|---|---|---|
+| Simulación | `radius`, `repulsion core (beta)`, `force`, `friction half-life` | reglas físicas |
+| Simulación | `speed`, `paused` + `step` | cámara lenta; avanzar un fotograma |
+| Aspecto | `glow size`, `brightness` | halos aditivos: donde se acumulan partículas, brilla más |
+| Aspecto | `trail` | estelas de movimiento |
+| Aspecto | `highlight` (botones de color) | atenúa todos los tipos salvo uno |
+| Vista | `zoom`, `view x/y` | teclas Q/E (zoom), W/A/S/D (mover), R (reset), arrastre con botón central |
+| Ratón | clic izquierdo / derecho en la ventana de render | atrae / repele partículas (`brush radius`, `brush strength`) |
+| Matriz | sliders por celda (cabeceras de color por tipo) | fila reacciona a columna: +1 se acerca, −1 huye |
+| Matriz | `random matrix` / `mutate matrix` (`mutation amount`) | universo nuevo / variación de la matriz actual |
+| Presets | `save preset` / `load next preset` | guarda en `presets/user/` (ignorado por git) |
 
 El mundo es el cuadrado unidad con bordes periódicos (toroidal).
 
@@ -46,17 +50,17 @@ Solo simulación (`uv run particle-life-bench`):
 | 200 000 | 0.02 | 251 | 86 |
 | 500 000 | 0.02 | 628 | 17 |
 
-Aplicación completa con ventana, sin vsync (`--no-vsync --bench-frames 300`), `r_max=0.01` salvo indicación:
+Aplicación completa con ventana de render 1400×1400, brillo activado, sin vsync (`--no-vsync --bench-frames 300`, tras calentamiento), `r_max=0.01` salvo indicación:
 
 | partículas | FPS |
 |---|---|
-| 30 000 (r=0.03) | 216 |
-| 100 000 | 194 |
-| 200 000 | 108 |
-| 300 000 | 68 |
+| 30 000 (r=0.03) | 156 |
+| 100 000 | 152 |
+| 200 000 | 97 |
+| 300 000 | 66 |
 | 500 000 | 35 |
 
-Conclusión: **~300 000 partículas a 60+ FPS** con radio 0.01 en este equipo. El objetivo de "cientos de miles" se cumple hasta ahí.
+Conclusión: **~300 000 partículas a 60+ FPS** con radio 0.01 en este equipo, ya con el renderizado de brillo. Con pocas partículas el límite lo marca el coste fijo de GGUI/Python (~3 ms por fotograma), no la GPU.
 
 ## Desarrollo
 ```bash
@@ -69,6 +73,9 @@ uv run pyright
 - `src/particle_life/sim.py` — simulación (Taichi), sin ventana ni entrada de usuario.
 - `src/particle_life/params.py` — parámetros y presets (Python puro).
 - `src/particle_life/reference.py` — referencia NumPy O(N²) usada en los tests.
-- `src/particle_life/app.py` — ventana GGUI de render y bucle principal.
+- `src/particle_life/render.py` — renderizador de halos aditivos (brillo, estelas, resaltado, cámara).
+- `src/particle_life/camera.py` — zoom y desplazamiento sobre el mundo periódico (puro).
+- `src/particle_life/colors.py` — colores por tipo.
+- `src/particle_life/app.py` — ventana GGUI de render, ratón/teclado y bucle principal.
 - `src/particle_life/ui.py` — panel de controles en Tk (GGUI no escala la fuente en monitores HiDPI).
 - `src/particle_life/bench.py` — benchmark sin ventana.
